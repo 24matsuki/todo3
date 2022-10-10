@@ -3,7 +3,7 @@ import React from "react";
 import { useSetRecoilState } from "recoil";
 import { filterState } from "../store/store";
 
-const Filter = () => {
+export const Filter = () => {
   const setFilterState = useSetRecoilState(filterState);
 
   return (
@@ -20,5 +20,3 @@ const Filter = () => {
     </Select>
   );
 };
-
-export default Filter;

@@ -4,9 +4,9 @@ import React, { useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { db } from "../firebase";
 import { filteredTodoListState, todoListState } from "../store/store";
-import TodoItem from "./TodoItem";
+import { TodoItem } from "./TodoItem";
 
-const TodoList = () => {
+export const TodoList = () => {
   const setTodoList = useSetRecoilState(todoListState);
   const todoList = useRecoilValue(filteredTodoListState);
 
@@ -36,5 +36,3 @@ const TodoList = () => {
     </Stack>
   );
 };
-
-export default TodoList;

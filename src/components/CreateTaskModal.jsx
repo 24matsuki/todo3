@@ -12,75 +12,78 @@ import {
   Input,
   Select,
   ModalFooter,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import React, { useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { db } from "../firebase";
 import { useForm } from "react-hook-form";
 
-const CreateTask = (props) => {
-  const initialRef = useRef();
+export const CreateTaskModal = (props) => {
   const { isOpen, onClose } = props;
-  const [todoInputValue, setTodoInputValue] = useState("");
-  const [todoSelectStatus, setTodoSelectStatus] = useState("Incomplete");
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    reset,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm({
+    defaultValues: {
+      todoInput: "",
+      statusSelect: "Incomplete",
+    },
+  });
 
-  const handleSubmitTodo = async (e) => {
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line
+  }, [isSubmitSuccessful, isOpen]);
+
+  const onSubmit = async (data, e) => {
     e.preventDefault();
 
     onClose();
 
-    console.log(initialRef.current.value);
-    // Firestoreへ追加
     await addDoc(collection(db, "todos"), {
-      text: todoInputValue,
-      status: todoSelectStatus,
+      text: data.todoInput,
+      status: data.statusSelect,
       createdAt: serverTimestamp(),
     });
-
-    setTodoInputValue("");
-  };
-
-  const handleCloseModal = () => {
-    onClose();
-    setTodoInputValue("");
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      initialFocusRef={initialRef}
-      motionPreset="slideInBottom"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
       <ModalOverlay />
       <ModalContent backgroundColor="gray.700" color="teal.500">
         <ModalHeader textAlign="center" fontSize="3xl" p="2" textShadow="lg">
           Create Task
         </ModalHeader>
-        <ModalCloseButton _hover={{ opacity: 0.7 }} />
-        <form onSubmit={handleSubmitTodo}>
+        <ModalCloseButton tabIndex="2" _hover={{ opacity: 0.7 }} />
+        <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody pb="4">
             <Stack spacing="4" color="white">
-              <FormControl>
+              <FormControl isInvalid={errors.todoInput}>
                 <FormLabel>Task</FormLabel>
                 <Input
                   type="text"
                   focusBorderColor="teal.500"
-                  ref={initialRef}
-                  value={todoInputValue}
-                  onChange={(e) => setTodoInputValue(e.target.value)}
+                  tabIndex="1"
+                  {...register("todoInput", {
+                    required: "This is required",
+                    maxLength: {
+                      value: 50,
+                      message: "Maximum length should be 50",
+                    },
+                  })}
                 />
+                <FormErrorMessage>
+                  {errors.todoInput && errors.todoInput.message}
+                </FormErrorMessage>
               </FormControl>
               <FormControl>
                 <FormLabel>Status</FormLabel>
                 <Select
                   focusBorderColor="teal.500"
-                  onChange={(e) => setTodoSelectStatus(e.target.value)}
+                  {...register("statusSelect")}
                 >
                   <option value="Incomplete">Incomplete</option>
                   <option value="Completed">Completed</option>
@@ -92,11 +95,7 @@ const CreateTask = (props) => {
             <Button colorScheme="teal" mr="2" type="submit">
               Create
             </Button>
-            <Button
-              colorScheme="teal"
-              variant="outline"
-              onClick={handleCloseModal}
-            >
+            <Button colorScheme="teal" variant="outline" onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
@@ -105,5 +104,3 @@ const CreateTask = (props) => {
     </Modal>
   );
 };
-
-export default CreateTask;

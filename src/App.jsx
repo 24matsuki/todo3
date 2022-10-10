@@ -8,11 +8,11 @@ import {
   Flex,
   Spacer,
 } from "@chakra-ui/react";
-import CreateTaskModal from "./components/CreateTaskModal";
-import Filter from "./components/Filter";
-import TodoList from "./components/TodoList";
+import { CreateTaskModal } from "./components/CreateTaskModal";
+import { Filter } from "./components/Filter";
+import { TodoList } from "./components/TodoList";
 
-const App = () => {
+export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -52,5 +52,3 @@ const App = () => {
     </Box>
   );
 };
-
-export default App;

@@ -8,17 +8,17 @@ import {
 } from "@chakra-ui/react";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { db } from "../firebase";
 import { currentTodoItemState } from "../store/store";
-import UpdateTaskModal from "./UpdateTaskModal";
+import { UpdateTaskModal } from "./UpdateTaskModal";
 
 const completedTodoText = {
   decoration: "line-through",
   color: "gray.400",
 };
 
-const TodoItem = ({ todoItem }) => {
+export const TodoItem = ({ todoItem }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const setCurrentTodoItem = useSetRecoilState(currentTodoItemState);
 
@@ -83,5 +83,3 @@ const TodoItem = ({ todoItem }) => {
     </>
   );
 };
-
-export default TodoItem;

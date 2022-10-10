@@ -19,7 +19,7 @@ import { useRecoilValue } from "recoil";
 import { db } from "../firebase";
 import { currentTodoItemState } from "../store/store";
 
-const UpdateTaskModal = (props) => {
+export const UpdateTaskModal = (props) => {
   const { isOpen, onClose } = props;
   const currentTodoItem = useRecoilValue(currentTodoItemState);
   const [todoInputValue, setTodoInputValue] = useState("");
@@ -96,5 +96,3 @@ const UpdateTaskModal = (props) => {
     </Modal>
   );
 };
-
-export default UpdateTaskModal;
