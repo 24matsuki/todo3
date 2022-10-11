@@ -12,75 +12,93 @@ import {
   Input,
   Select,
   ModalFooter,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { db } from "../firebase";
 import { currentTodoItemState } from "../store/store";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const UpdateTaskModal: FC<Props> = (props) => {
-  const { isOpen, onClose } = props;
+type Inputs = {
+  todoInput: string;
+  statusSelect: string;
+};
+
+export const UpdateTaskModal: FC<Props> = ({ isOpen, onClose }) => {
   const currentTodoItem = useRecoilValue(currentTodoItemState);
-  const [todoInputValue, setTodoInputValue] = useState("");
-  const [todoSelectStatus, setTodoSelectStatus] = useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      todoInput: "",
+      statusSelect: "Incomplete",
+    },
+  });
 
   useEffect(() => {
-    setTodoInputValue(currentTodoItem.text);
-    setTodoSelectStatus(currentTodoItem.status);
-  }, [currentTodoItem]);
+    reset({
+      todoInput: currentTodoItem.text,
+      statusSelect: currentTodoItem.status,
+    });
+    // eslint-disable-next-line
+  }, [isOpen, currentTodoItem]);
 
-  const handleSubmitTodo = async (e: any) => {
+  const onSubmit: SubmitHandler<Inputs> = (data, e: any) => {
     e.preventDefault();
 
     onClose();
     // Firestoreの更新
-    await updateDoc(doc(db, "todos", currentTodoItem.id), {
-      text: todoInputValue,
-      status: todoSelectStatus,
+    updateDoc(doc(db, "todos", currentTodoItem.id), {
+      text: data.todoInput,
+      status: data.statusSelect,
       updatedAt: serverTimestamp(),
     });
-
-    setTodoInputValue("");
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent backgroundColor="gray.800">
-        <ModalHeader
-          textAlign="center"
-          fontSize="3xl"
-          p="2"
-          color="teal.500"
-          textShadow="lg"
-        >
+      <ModalContent backgroundColor="gray.700" color="teal.500">
+        <ModalHeader textAlign="center" fontSize="3xl" p="2" textShadow="lg">
           Update Task
         </ModalHeader>
-        <ModalCloseButton />
-        <form onSubmit={handleSubmitTodo}>
+        <ModalCloseButton tabIndex={2} _hover={{ opacity: 0.7 }} />
+        <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody pb="4">
             <Stack spacing="4" color="white">
-              <FormControl>
+              <FormControl isInvalid={Boolean(errors.todoInput)}>
                 <FormLabel>Task</FormLabel>
                 <Input
                   type="text"
                   focusBorderColor="teal.500"
-                  value={todoInputValue}
-                  onChange={(e) => setTodoInputValue(e.target.value)}
+                  tabIndex={1}
+                  {...register("todoInput", {
+                    required: "This is required",
+                    maxLength: {
+                      value: 50,
+                      message: "Maximum length should be 50",
+                    },
+                  })}
                 />
+                <FormErrorMessage>
+                  {errors.todoInput && errors.todoInput.message}
+                </FormErrorMessage>
               </FormControl>
               <FormControl>
                 <FormLabel>Status</FormLabel>
                 <Select
-                  value={todoSelectStatus}
                   focusBorderColor="teal.500"
-                  onChange={(e) => setTodoSelectStatus(e.target.value)}
+                  {...register("statusSelect")}
                 >
                   <option value="Incomplete">Incomplete</option>
                   <option value="Completed">Completed</option>

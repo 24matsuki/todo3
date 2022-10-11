@@ -29,13 +29,12 @@ type Inputs = {
   statusSelect: string;
 };
 
-export const CreateTaskModal: FC<Props> = (props) => {
-  const { isOpen, onClose } = props;
+export const CreateTaskModal: FC<Props> = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       todoInput: "",
@@ -46,17 +45,18 @@ export const CreateTaskModal: FC<Props> = (props) => {
   useEffect(() => {
     reset();
     // eslint-disable-next-line
-  }, [isSubmitSuccessful, isOpen]);
+  }, [isOpen]);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data, e: any) => {
+  const onSubmit: SubmitHandler<Inputs> = (data, e: any) => {
     e.preventDefault();
 
     onClose();
 
-    await addDoc(collection(db, "todos"), {
+    addDoc(collection(db, "todos"), {
       text: data.todoInput,
       status: data.statusSelect,
       createdAt: serverTimestamp(),
+      updatedAt: null,
     });
   };
 
@@ -102,7 +102,7 @@ export const CreateTaskModal: FC<Props> = (props) => {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="teal" mr="2" type="submit">
+            <Button colorScheme="teal" mr="3" type="submit">
               Create
             </Button>
             <Button colorScheme="teal" variant="outline" onClick={onClose}>
