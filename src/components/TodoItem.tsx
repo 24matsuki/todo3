@@ -25,13 +25,14 @@ type Props = {
 export const TodoItem: FC<Props> = ({ todoItem }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const setCurrentTodoItem = useSetRecoilState(currentTodoItemState);
+  const docRef = doc(db, "todos", todoItem.id);
 
   const handleDeleteTodo = () => {
-    deleteDoc(doc(db, "todos", todoItem.id));
+    deleteDoc(docRef);
   };
 
   const toggleTodoStatus = () => {
-    updateDoc(doc(db, "todos", todoItem.id), {
+    updateDoc(docRef, {
       status: todoItem.status === "Completed" ? "Incomplete" : "Completed",
     });
   };

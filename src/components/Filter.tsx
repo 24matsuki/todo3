@@ -1,9 +1,9 @@
 import { Select } from "@chakra-ui/react";
-import React from "react";
+import React, { FC } from "react";
 import { useSetRecoilState } from "recoil";
 import { filterState } from "../store/store";
 
-export const Filter = () => {
+export const Filter: FC = () => {
   const setFilterState = useSetRecoilState(filterState);
 
   return (
