@@ -14,12 +14,17 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { db } from "../firebase";
 import { currentTodoItemState } from "../store/store";
 
-export const UpdateTaskModal = (props) => {
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export const UpdateTaskModal: FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   const currentTodoItem = useRecoilValue(currentTodoItemState);
   const [todoInputValue, setTodoInputValue] = useState("");
@@ -30,7 +35,7 @@ export const UpdateTaskModal = (props) => {
     setTodoSelectStatus(currentTodoItem.status);
   }, [currentTodoItem]);
 
-  const handleSubmitTodo = async (e) => {
+  const handleSubmitTodo = async (e: any) => {
     e.preventDefault();
 
     onClose();

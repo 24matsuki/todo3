@@ -1,3 +1,4 @@
+import React, { FC } from "react";
 import {
   Box,
   Button,
@@ -12,7 +13,7 @@ import { CreateTaskModal } from "./components/CreateTaskModal";
 import { Filter } from "./components/Filter";
 import { TodoList } from "./components/TodoList";
 
-export const App = () => {
+export const App: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -31,7 +32,7 @@ export const App = () => {
           </Heading>
           <Flex w="100%" pt="4">
             <Button
-              focusBorderColor="teal.500"
+              _focus={{ borderColor: "teal.500" }}
               _hover={{ backgroundColor: "gray.700" }}
               w="40"
               variant="outline"

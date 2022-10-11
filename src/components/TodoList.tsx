@@ -1,12 +1,12 @@
 import { Stack } from "@chakra-ui/react";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { db } from "../firebase";
 import { filteredTodoListState, todoListState } from "../store/store";
 import { TodoItem } from "./TodoItem";
 
-export const TodoList = () => {
+export const TodoList: FC = () => {
   const setTodoList = useSetRecoilState(todoListState);
   const todoList = useRecoilValue(filteredTodoListState);
 
@@ -18,7 +18,6 @@ export const TodoList = () => {
         text: doc.data().text,
         status: doc.data().status,
       }));
-      // console.log(newTodoList);
       setTodoList(newTodoList);
     });
     return () => {

@@ -15,11 +15,21 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { db } from "../firebase";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 
-export const CreateTaskModal = (props) => {
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+type Inputs = {
+  todoInput: string;
+  statusSelect: string;
+};
+
+export const CreateTaskModal: FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   const {
     register,
@@ -38,7 +48,7 @@ export const CreateTaskModal = (props) => {
     // eslint-disable-next-line
   }, [isSubmitSuccessful, isOpen]);
 
-  const onSubmit = async (data, e) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data, e: any) => {
     e.preventDefault();
 
     onClose();
@@ -57,16 +67,16 @@ export const CreateTaskModal = (props) => {
         <ModalHeader textAlign="center" fontSize="3xl" p="2" textShadow="lg">
           Create Task
         </ModalHeader>
-        <ModalCloseButton tabIndex="2" _hover={{ opacity: 0.7 }} />
+        <ModalCloseButton tabIndex={2} _hover={{ opacity: 0.7 }} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody pb="4">
             <Stack spacing="4" color="white">
-              <FormControl isInvalid={errors.todoInput}>
+              <FormControl isInvalid={Boolean(errors.todoInput)}>
                 <FormLabel>Task</FormLabel>
                 <Input
                   type="text"
                   focusBorderColor="teal.500"
-                  tabIndex="1"
+                  tabIndex={1}
                   {...register("todoInput", {
                     required: "This is required",
                     maxLength: {

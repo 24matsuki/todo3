@@ -1,13 +1,23 @@
 import { atom, selector } from "recoil";
 
-const todoListState = atom({
+export type TodoItemType = {
+  id: string;
+  text: string;
+  status: string;
+};
+
+const todoListState = atom<TodoItemType[]>({
   key: "todoListState",
   default: [],
 });
 
-const currentTodoItemState = atom({
+const currentTodoItemState = atom<TodoItemType>({
   key: "currentTodoItemState",
-  default: {},
+  default: {
+    id: "",
+    text: "",
+    status: "",
+  },
 });
 
 const filterState = atom({
@@ -15,7 +25,7 @@ const filterState = atom({
   default: "All",
 });
 
-const filteredTodoListState = selector({
+const filteredTodoListState = selector<TodoItemType[]>({
   key: "filteredTodoListState",
   get: ({ get }) => {
     const filter = get(filterState);

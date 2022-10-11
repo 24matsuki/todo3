@@ -7,10 +7,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import React from "react";
+import React, { FC } from "react";
 import { useSetRecoilState } from "recoil";
 import { db } from "../firebase";
-import { currentTodoItemState } from "../store/store";
+import { currentTodoItemState, TodoItemType } from "../store/store";
 import { UpdateTaskModal } from "./UpdateTaskModal";
 
 const completedTodoText = {
@@ -18,7 +18,11 @@ const completedTodoText = {
   color: "gray.400",
 };
 
-export const TodoItem = ({ todoItem }) => {
+type Props = {
+  todoItem: TodoItemType;
+};
+
+export const TodoItem: FC<Props> = ({ todoItem }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const setCurrentTodoItem = useSetRecoilState(currentTodoItemState);
 
@@ -56,8 +60,7 @@ export const TodoItem = ({ todoItem }) => {
         />
         <Text
           flex="1"
-          noOfLines="1"
-          alt={todoItem.text}
+          noOfLines={1}
           {...(todoItem.status === "Completed" && completedTodoText)}
         >
           {todoItem.text}
